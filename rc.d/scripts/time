@@ -1,0 +1,24 @@
+#!/bin/sh
+#
+# This script restores time from disk for machines without a RTC.
+#
+
+. /etc/rc.d/config
+CURRENTTIME="1716958490"
+
+start() {
+	if [ $TIME_SOURCE == "disk" ]; then
+		date -s "@$CURRENTTIME" &> /dev/null
+	elif [ $TIME_SOURCE == "network" ]; then
+		WAIT=$(ping -qc1 $TIME_SERVER)
+		DATETIME=$(cat </dev/tcp/$TIME_SERVER/13 2> /dev/null | tail -1 | cut -d ' ' -f 2-3)
+		date +"%y-%m-%d %T" -s "$DATETIME"'UTC' &> /dev/null
+	fi
+}
+
+stop() {
+	# Store time back on disk
+	DATETIME=$(date +%s)
+	[ "$DATETIME" -gt "$CURRENTTIME" ] &&\
+	sed -i "s/$CURRENTTIME/$DATETIME/g" $(pwd "$0")/"$0"
+}

@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+# This script enables SSH connectivity.
+#
+
+. /etc/rc.d/config
+
+start() {
+	if [ $SSH_SERVER == "openssh" ]; then
+		/usr/bin/sshd
+	elif [ $SSH_SERVER == "dropbear" ]; then
+		dropbear -Rw
+	fi
+}
+
+stop() {
+	if [ $SSH_SERVER == "openssh" ]; then
+		pkill sshd
+	elif [ $SSH_SERVER == "dropbear" ]; then
+		pkill dropbear
+	fi
+}

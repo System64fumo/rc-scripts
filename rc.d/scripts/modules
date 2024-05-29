@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# This script loads system modules.
+#
+
+start() {
+	#Autodetect
+	find /sys -name 'modalias' -type f -exec cat '{}' + | sort -u |\
+	xargs /bin/modprobe -abq &> /dev/null &
+}
+
+stop() {
+	lsmod | tail -n +2 | cut -d ' ' -f 1 |\
+	xargs -L1 modprobe -rf --remove-holders
+}

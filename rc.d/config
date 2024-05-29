@@ -1,0 +1,46 @@
+#
+# This file contains general configuration options.
+#
+
+# Z-RAM
+ZRAM_SIZE="1024"			# Size in MB
+ZRAM_ALGORITHM="zstd"		# lz4 | zstd
+
+# Splash screen
+SPLASH_TYPE="static"		# static | animated
+SPLASH_FRAME_DELAY=1
+SPLASH_DELAY=3
+
+# Login
+LOGIN_PROVIDER="elogind"	# logind | elogind | seatd
+XDG_RUNTIME_DIR=/run/user/1000
+
+# UDEV
+UDEV_PROVIDER="udev"		# systemd-udev | udev | mdev
+
+# Audio
+AUDIO_SERVER="pipewire"		# pipewire | pulseaudio
+
+# Network
+NETWORK_DCHP="false"
+NETWORK_DEVICE="eth0"
+NETWORK_IPV4="192.168.1.123"
+NETWORK_IPV6="3b15:5baf:8144:a3da:32a4:cf8e:f896:a290"
+NETWORK_GATEWAY="192.168.1.1"
+NETWORK_MASK="255.255.255.0"
+NETWORK_MTU="9000"
+
+# Wireless Networking
+NETWORK_WIRELESS_DEVICE="wlan0"
+
+# Network bridge
+BRIDGE_DEV1="eth0"
+BRIDGE_DEV2="eth1"
+BRIDGE_NAME="br0"
+
+# Time
+TIME_SOURCE="network"		# disk | network
+TIME_SERVER=132.163.97.1 	# 132.163.97.1 
+
+# Secure Shell Daemon
+SSH_SERVER="dropbear"		# openssh | dropbear

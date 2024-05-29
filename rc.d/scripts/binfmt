@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# This script provides emulation support for different architectures.
+#
+
+start() {
+	mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
+	echo 1 > /proc/sys/fs/binfmt_misc/status
+	for file in /etc/binfmt.d/* /usr/lib/binfmt.d/*; do
+		grep -sv "#" $file > /proc/sys/fs/binfmt_misc/register
+	done
+}
+
+stop() {
+	for file in /proc/sys/fs/binfmt_misc/*; do
+		[ "$file" != "/proc/sys/fs/binfmt_misc/register" ] &&\
+		[ "$file" != "/proc/sys/fs/binfmt_misc/status" ] &&\
+		echo -1 > $file
+	done
+	umount /proc/sys/fs/binfmt_misc
+}

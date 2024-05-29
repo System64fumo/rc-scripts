@@ -1,0 +1,57 @@
+#!/bin/sh
+#
+# This script mounts the linux pseudo filesystem.
+#
+
+start() {
+	# Sys
+	mountpoint -q /sys	||\
+	mount -t sysfs sys /sys -o noexec,nosuid,nodev
+	mount -t cgroup2 none /sys/fs/cgroup &
+
+	# Debug
+	(mountpoint -q /sys/kernel/debug	||\
+	mount -t debugfs none /sys/kernel/debug) &
+
+	# EFI
+	if [ $(uname -m) == "x86_64" ]; then
+		mountpoint -q /sys/firmware/efi/efivars ||\
+		mount -t efivarfs efivarfs /sys/firmware/efi/efivars
+	fi
+
+	# Dev
+	mountpoint -q /dev	||\
+	mount -t devtmpfs dev /dev -o mode=0755,nosuid
+
+	mkdir -p /dev/{pts,shm}
+	(mountpoint -q /dev/pts	||\
+	mount -t devpts	devpts /dev/pts -o mode=0620,gid=5,noexec,nosuid) &
+
+	(mountpoint -q /dev/shm	||\
+	mount -t tmpfs devshm /dev/shm -o mode=1777,nosuid,nodev) &
+
+	# Proc
+	mountpoint -q /proc	||\
+	(mount -t proc proc /proc -o noexec,nosuid,nodev
+	ln -snf /proc/kcore /dev/core) &
+
+	# Misc
+	mountpoint -q /run	||\
+	mount -t tmpfs run /run -o mode=0755,nosuid,nodev
+
+	mountpoint -q /tmp	||\
+	mount -t tmpfs tmpfs /tmp -o mode=0777,nosuid,nodev &
+
+
+	# Consoles
+	([ -c /dev/console ] || mknod -m 600 /dev/console	c 5 1)	&
+	([ -c /dev/tty1 ]	|| mknod -m 620 /dev/tty1		c 4 1)	&
+	([ -c /dev/tty ]	|| mknod -m 666 /dev/tty		c 5 0)	&
+
+	([ -c /dev/kmsg ]	|| mknod -m 660 /dev/kmsg		c 1 11)	&
+
+	([ -e /dev/fd ]		|| ln -snf /proc/self/fd /dev/fd)		&
+	([ -e /dev/stdin ]	|| ln -snf /proc/self/fd/0 /dev/stdin)	&
+	([ -e /dev/stdout ]	|| ln -snf /proc/self/fd/1 /dev/stdout)	&
+	([ -e /dev/stderr ]	|| ln -snf /proc/self/fd/2 /dev/stderr)	&
+}

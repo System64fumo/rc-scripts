@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# This script provides network capabilities.
+#
+
+. /etc/rc.d/config
+
+start() {
+	udevadm wait /sys/class/net/$NETWORK_WIRELESS_DEVICE
+	if [ -f /usr/bin/NetworkManager ]; then
+		NetworkManager
+	elif [ -f /usr/bin/wpa_supplicant ]; then
+		wpa_supplicant -Bi $NETWORK_WIRELESS_DEVICE -c /etc/wpa_supplicant/wpa_supplicant.conf
+	fi
+}
+
+stop() {
+	pkill NetworkManager
+	pkill wpa_supplicant
+}

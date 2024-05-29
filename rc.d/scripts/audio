@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+# This script starts an audio server.
+#
+
+. /etc/rc.d/config
+
+start() {
+	if [ $AUDIO_SERVER == "pipewire" ]; then
+		pipewire &> /dev/null &
+		pipewire-pulse &> /dev/null &
+		wireplumber &> /dev/null &
+	elif [ $AUDIO_SERVER == "pulseaudio" ]; then
+		pulseaudio &
+	else
+		echo "Unknown audio config: $AUDIO."
+	fi
+}
+
+stop() {
+	pkill $AUDIO_SERVER
+}

@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# This script provides NFS Server functionality.
+#
+
+start() {
+	rpcbind -w -f &
+	rpc.statd
+	rpc.idmapd
+	rpc.gssd
+	nfsdcld
+	sm-notify
+	exportfs -r
+	rpc.nfsd --rdma=20049
+	rpc.mountd
+}
+
+stop() {
+	pkill rpc
+}

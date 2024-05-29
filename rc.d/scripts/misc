@@ -1,0 +1,27 @@
+#!/bin/sh
+#
+# This script sets up misc stuff.
+#
+
+start() {
+	# Set hostname
+	cat /etc/hostname >| /proc/sys/kernel/hostname
+
+	# Load system variables
+	sysctl -q --system &> /dev/null &
+
+	# Increase max memory map count
+	sysctl -qw vm.max_map_count=1048576 &
+
+	# Move kernel threads to core 0
+	#pgrep -P 2 | xargs -i taskset -p -c 0 {} &> /dev/null &
+
+	# Move kernel workqueues away from isolated cores
+	#find /sys/devices/virtual/workqueue -name cpumask	-exec sh -c 'echo 1 > {}' ';' &> /dev/null &
+
+	# Set CPU governor
+	#find /sys/devices/system/cpu -name scaling_governor -exec sh -c 'echo performance > {}' ';'
+
+	# Create log and cache dirs
+	mkdir -m 777 /tmp/log /tmp/cache
+}

@@ -1,0 +1,13 @@
+#!/bin/sh
+#
+# This script mounts disks.
+#
+
+start() {
+	mount / -o rw,remount,compress=zstd,noatime
+	mount -aF &> /dev/null &
+}
+
+stop() {
+	umount -a
+}

@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+# This script enables bluetooth connectivity.
+#
+
+start() {
+	/usr/lib/bluetooth/bluetoothd &
+}
+
+stop() {
+	pkill bluetoothd &
+}

@@ -1,0 +1,12 @@
+#
+# This file configures busybox's init system
+#
+
+::sysinit:/etc/rc.d/init
+
+tty1::respawn:/sbin/agetty -Jia root --skip-login --nonewline --nohostname - linux
+tty2::respawn:/sbin/agetty - linux
+
+::ctrlaltdel:/bin/reboot
+::restart:/etc/rc.d/shutdown
+::shutdown:/etc/rc.d/shutdown

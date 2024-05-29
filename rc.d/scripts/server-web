@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+# This script provides a web server.
+#
+
+start() {
+	lighttpd-angel -f /etc/lighttpd/lighttpd.conf
+}
+
+stop() {
+	pkill lighttpd
+}

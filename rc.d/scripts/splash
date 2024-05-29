@@ -1,0 +1,29 @@
+#!/bin/sh
+#
+# This script plays a boot splash animation
+#
+
+. /etc/rc.d/config
+
+start() {
+	cat /dev/zero &> /dev/fb0
+	if [ "$SPLASH_TYPE" == "static" ]; then
+	fbsplash \
+		-s /etc/rc.d/splash/static.ppm \
+		-i /etc/rc.d/splash/fbsplash.ini
+
+	elif [ "$SPLASH_TYPE" == "animated" ]; then
+	while true; do
+		for frame in /etc/rc.d/splash/animated/*.ppm; do
+		fbsplash \
+			-s $frame \
+			-i /etc/rc.d/splash/fbsplash.ini
+		sleep $SPLASH_FRAME_DELAY
+		done
+	done
+	fi
+}
+
+stop() {
+	pkill fbsplash
+}

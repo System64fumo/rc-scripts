@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+# This script allows programs to run with realtime priority.
+#
+
+start() {
+	/usr/lib/rtkit-daemon --min-nice-level=-17 --threads-per-user-max=11 &
+}
+
+stop() {
+	pkill rtkit-daemon
+}

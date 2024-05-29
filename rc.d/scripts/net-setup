@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+# Miscellaneous network configurations.
+#
+
+start() {
+
+	# Configuration
+	sysctl -qw net.ipv4.ping_group_range="0 2147483647" &
+	sysctl -qw net.ipv6.conf.all.autoconf=0 &
+	sysctl -qw net.ipv6.conf.all.accept_ra=0 &
+	sysctl -qw net.core.rmem_max=67108864 &
+	sysctl -qw net.core.wmem_max=67108864 &
+	sysctl -qw net.ipv4.tcp_rmem="4096 87380 33554432" &
+	sysctl -qw net.ipv4.tcp_wmem="4096 65536 33554432" &
+	sysctl -qw net.ipv4.tcp_mtu_probing=1 &
+	sysctl -qw net.core.netdev_max_backlog="5000" &
+
+	# Loopback device
+	ip link set up dev lo &
+
+}

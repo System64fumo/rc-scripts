@@ -1,0 +1,27 @@
+#!/bin/sh
+#
+# This script acts as the service manager
+#
+
+# Use busybox instead of system binaries
+export PATH=/opt/busybox:$PATH
+
+# Load service
+[ ! -z $2 ] && source /etc/rc.d/scripts/$2
+
+case "$1" in
+	start)
+		start
+	;;
+	stop)
+		stop
+	;;
+	restart)
+		stop
+		sleep 1
+		start
+	;;
+	*)
+		echo $"Usage: $0 {start|stop|restart}"
+	;;
+esac

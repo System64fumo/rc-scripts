@@ -1,0 +1,39 @@
+#!/bin/sh
+#
+# This script detects devices on the system.
+#
+
+. /etc/rc.d/config
+
+start() {
+	if [ "$UDEV_PROVIDER" == "udev" ]; then
+
+		udevd -d -c 4 &> /dev/null
+		udevadm trigger --action=add --type=subsystems
+		udevadm trigger --action=add --type=devices
+
+	elif [ "$UDEV_PROVIDER" == "systemd-udev" ]; then
+
+		/usr/lib/systemd/systemd-udevd -d -c 4 &> /dev/null
+		udevadm trigger --action=add --type=subsystems
+		udevadm trigger --action=add --type=devices
+
+	elif [ "$UDEV_PROVIDER" == "mdev" ]; then
+
+		echo /usr/bin/mdev > /proc/sys/kernel/hotplug &
+		env -i mdev -s
+		for i in /sys/class/net/*/uevent; do printf 'add' > "$i"; done 2>/dev/null; unset i
+		for i in /sys/bus/usb/devices/*; do
+				case "${i##*/}" in
+					[0-9]*-[0-9]*)
+						printf 'add' > "$i/uevent" &
+					;;
+				esac
+		done; unset i
+
+	fi
+}
+
+stop() {
+	pkill $UDEV_PROVIDER
+}

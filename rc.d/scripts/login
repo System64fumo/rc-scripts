@@ -1,0 +1,39 @@
+#!/bin/sh
+#
+# This script selects which logon method to use.
+#
+
+. /etc/rc.d/config
+
+start() {
+	# User runtime directory
+	mkdir -pm700 $XDG_RUNTIME_DIR
+	chown 1000:1000 $XDG_RUNTIME_DIR &
+
+	# System Bus
+	dbus-uuidgen --ensure=/etc/machine-id &
+	[ ! -d /run/dbus ] && install -m755 -g 81 -o 81 -d /run/dbus
+	dbus-daemon --system --fork --nopidfile &> /dev/null
+
+	# Session manager
+	if [[ $LOGIN_PROVIDER == "logind" ]]; then
+		mkdir -p /run/systemd/{seats,sessions.users}
+		/usr/lib/systemd/systemd-logind &
+	elif [[ $LOGIN_PROVIDER == "elogind" ]]; then
+		/usr/lib/elogind/elogind-cgroups-agent
+		/usr/lib/elogind/elogind -D
+	elif [[ $LOGIN_PROVIDER == "seatd" ]]; then
+		seatd -g video &
+	fi
+}
+
+stop() {
+	if [[ $LOGIN_PROVIDER == "logind" ]]; then
+		pkill systemd-logind
+	elif [[ $LOGIN_PROVIDER == "elogind" ]]; then
+		pkill elogind-cgroups-agent
+		pkill elogind
+	elif [[ $LOGIN_PROVIDER == "seatd" ]]; then
+		pkill seatd
+	fi
+}

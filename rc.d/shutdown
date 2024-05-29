@@ -1,0 +1,8 @@
+#!/bin/sh
+#
+# Shutdown script
+#
+
+sync
+pkill -x login &> /dev/null
+umount -a &> /dev/null
