@@ -7,10 +7,27 @@
 
 start() {
 	cat /dev/zero &> /dev/fb0
+
+	IMAGE="/etc/rc.d/splash/static.ppm"
+
+	mode=$(cat "/sys/class/graphics/fb0/modes")
+	screen_width=$(echo "$mode" | grep -oP 'U:\K[0-9]+(?=x)')
+	screen_height=$(echo "$mode" | grep -oP 'x\K[0-9]+(?=p)')
+
+	image_width=$(file "$IMAGE" | grep -oP 'size = \K[0-9]+(?= x)')
+	image_height=$(file "$IMAGE" | grep -oP 'x \K[0-9]+(?=,)')
+
+	IMG_LEFT=$(( (screen_width - image_width) / 2 ))
+	IMG_TOP=$(( (screen_height - image_height) / 2 ))
+
+	echo "IMG_LEFT=$IMG_LEFT" > /tmp/fbsplash.ini
+	echo "IMG_TOP=$IMG_TOP" >> /tmp/fbsplash.ini
+
 	if [ "$SPLASH_TYPE" == "static" ]; then
 	fbsplash \
-		-s /etc/rc.d/splash/static.ppm \
-		-i /etc/rc.d/splash/fbsplash.ini
+		-s $IMAGE \
+		-i /tmp/fbsplash.ini
+	rm /tmp/fbsplash.ini
 
 	elif [ "$SPLASH_TYPE" == "animated" ]; then
 	while true; do
