@@ -6,15 +6,19 @@
 . /etc/rc.d/config
 
 start() {
-	[ "$NETWORK_DCHP" == "true" ] && dhcpcd -j /tmp/log/dhcp.log && exit
+	if [ -f /usr/bin/NetworkManager ]; then
+		NetworkManager
+	else
+		[ "$NETWORK_DCHP" == "true" ] && dhcpcd -j /tmp/log/dhcp.log && exit
 
-	#until $(ip a show $NETWORK_DEVICE &> /dev/null); do sleep 0.5; done
-	udevadm wait /sys/class/net/$NETWORK_DEVICE
-	ip link set $NETWORK_DEVICE up
-	ip addr add $NETWORK_IPV4/24 broadcast + dev $NETWORK_DEVICE
-	ip addr add $NETWORK_IPV6/64 dev $NETWORK_DEVICE
-	ip route add default via $NETWORK_GATEWAY dev $NETWORK_DEVICE
-	ip link set dev $NETWORK_DEVICE mtu $NETWORK_MTU
+		#until $(ip a show $NETWORK_DEVICE &> /dev/null); do sleep 0.5; done
+		udevadm wait /sys/class/net/$NETWORK_DEVICE
+		ip link set $NETWORK_DEVICE up
+		ip addr add $NETWORK_IPV4/24 broadcast + dev $NETWORK_DEVICE
+		ip addr add $NETWORK_IPV6/64 dev $NETWORK_DEVICE
+		ip route add default via $NETWORK_GATEWAY dev $NETWORK_DEVICE
+		ip link set dev $NETWORK_DEVICE mtu $NETWORK_MTU
+	fi
 }
 
 stop() {
