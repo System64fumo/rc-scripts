@@ -39,7 +39,6 @@ BRIDGE_DEV2="eth1"
 BRIDGE_NAME="br0"
 
 # Time
-TIME_SOURCE="network"		# disk | network
 TIME_SERVER=132.163.97.1 	# 132.163.97.1 
 
 # Secure Shell Daemon

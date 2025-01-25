@@ -7,13 +7,13 @@
 CURRENTTIME="1716958490"
 
 start() {
-	if [ $TIME_SOURCE == "disk" ]; then
-		date -s "@$CURRENTTIME" &> /dev/null
-	elif [ $TIME_SOURCE == "network" ]; then
-		WAIT=$(ping -qc1 $TIME_SERVER)
-		DATETIME=$(cat </dev/tcp/$TIME_SERVER/13 2> /dev/null | tail -1 | cut -d ' ' -f 2-3)
-		date +"%y-%m-%d %T" -s "$DATETIME"'UTC' &> /dev/null
-	fi
+	# Load time from disk
+	date -s "@$CURRENTTIME" &> /dev/null
+
+	# Load time from network
+	WAIT=$(ping -qc1 $TIME_SERVER)
+	DATETIME=$(cat </dev/tcp/$TIME_SERVER/13 2> /dev/null | tail -1 | cut -d ' ' -f 2-3)
+	date +"%y-%m-%d %T" -s "$DATETIME"'UTC' &> /dev/null
 }
 
 stop() {
