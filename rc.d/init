@@ -19,6 +19,7 @@ nice -n 1 ./service start rtkit &
 nice -n 19 ./service start udev &
 nice -n -20 ./service start net-setup &
 nice -n -20 ./service start net-wired &
+nice -n -20 ./service start time &
 nice -n -20 ./service start zram &
 nice -n -20 ./service start sshd &
 nice -n 19 ./service start binfmt &

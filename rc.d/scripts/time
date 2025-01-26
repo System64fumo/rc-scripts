@@ -11,9 +11,15 @@ start() {
 	date -s "@$CURRENTTIME" &> /dev/null
 
 	# Load time from network
-	WAIT=$(ping -qc1 $TIME_SERVER)
-	DATETIME=$(cat </dev/tcp/$TIME_SERVER/13 2> /dev/null | tail -1 | cut -d ' ' -f 2-3)
-	date +"%y-%m-%d %T" -s "$DATETIME"'UTC' &> /dev/null
+	while true; do
+		WAIT=$(ping -qc1 $TIME_SERVER)
+		DATETIME=$(cat </dev/tcp/$TIME_SERVER/13 2> /dev/null | tail -1 | cut -d ' ' -f 2-3)
+		if date +"%y-%m-%d %T" -s "$DATETIME"'UTC' &> /dev/null; then
+			break
+		else
+			sleep 5
+		fi
+	done
 }
 
 stop() {
