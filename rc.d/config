@@ -39,7 +39,7 @@ BRIDGE_DEV2="eth1"
 BRIDGE_NAME="br0"
 
 # Time
-TIME_SERVER=132.163.97.1 	# 132.163.97.1 
+TIME_SERVER=129.6.15.26 	# 129.6.15.26
 
 # Secure Shell Daemon
 SSH_SERVER="dropbear"		# openssh | dropbear

@@ -3,6 +3,6 @@
 # Shutdown script
 #
 
+/etc/rc.d/service stop time
 sync
-pkill -x login &> /dev/null
 umount -a &> /dev/null

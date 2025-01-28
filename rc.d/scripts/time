@@ -4,7 +4,7 @@
 #
 
 . /etc/rc.d/config
-CURRENTTIME="1716958490"
+CURRENTTIME="1738057429"
 
 start() {
 	# Load time from disk
@@ -12,9 +12,9 @@ start() {
 
 	# Load time from network
 	while true; do
-		WAIT=$(ping -qc1 $TIME_SERVER)
-		DATETIME=$(cat </dev/tcp/$TIME_SERVER/13 2> /dev/null | tail -1 | cut -d ' ' -f 2-3)
-		if date +"%y-%m-%d %T" -s "$DATETIME"'UTC' &> /dev/null; then
+		if cat </dev/tcp/$TIME_SERVER/13 &> /dev/null;then
+			DATETIME=$(cat </dev/tcp/$TIME_SERVER/13 2> /dev/null | tail -1 | cut -d ' ' -f 2-3)
+			date +"%y-%m-%d %T" -s "$DATETIME"'UTC' &> /dev/null
 			break
 		else
 			sleep 5
@@ -26,5 +26,5 @@ stop() {
 	# Store time back on disk
 	DATETIME=$(date +%s)
 	[ "$DATETIME" -gt "$CURRENTTIME" ] &&\
-	sed -i "s/$CURRENTTIME/$DATETIME/g" $(pwd "$0")/"$0"
+	sed -i "s/$CURRENTTIME/$DATETIME/g" /etc/rc.d/scripts/time
 }
