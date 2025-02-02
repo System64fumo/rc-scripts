@@ -18,6 +18,9 @@ XDG_RUNTIME_DIR=/run/user/1000
 # UDEV
 UDEV_PROVIDER="udev"		# systemd-udev | udev | mdev
 
+# Power control
+GOVERNOR="performance"		# ondemand | powersave | performance
+
 # Audio
 AUDIO_SERVER="pipewire"		# pipewire | pulseaudio
 
