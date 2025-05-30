@@ -1,0 +1,27 @@
+#!/bin/sh
+#
+# This script shares the network with another device.
+#
+
+. /etc/rc.d/config
+
+start() {
+	udevadm wait /sys/class/net/$NETWORK_SHARE_DEVICE
+	echo 1 > /proc/sys/net/ipv4/ip_forward
+	ip link set $NETWORK_SHARE_DEVICE up
+	ip addr add $NETWORK_SHARE_IPV4/24 broadcast + dev $NETWORK_SHARE_DEVICE
+	ip addr add $NETWORK_SHARE_IPV6/64 dev $NETWORK_SHARE_DEVICE
+	ip link set dev $NETWORK_SHARE_DEVICE mtu $NETWORK_SHARE_MTU
+
+	iptables -t nat -A POSTROUTING -o $NETWORK_DEVICE -j MASQUERADE
+	iptables -A FORWARD -i $NETWORK_SHARE_DEVICE -o $NETWORK_DEVICE -j ACCEPT
+	iptables -A FORWARD -i $NETWORK_DEVICE -o $NETWORK_SHARE_DEVICE -m state --state ESTABLISHED,RELATED -j ACCEPT
+}
+
+stop() {
+	echo 0 > /proc/sys/net/ipv4/ip_forward
+	ip route del default dev $NETWORK_SHARE_DEVICE
+	ip addr del $NETWORK_SHARE_IPV4/24 $NETWORK_SHARE_DEVICE
+	ip link set $NETWORK_SHARE_DEVICE down
+}
+
